@@ -60,9 +60,9 @@ public interface PhysicalEntity {
 	 * Sets the current orientation of this Entity.
 	 * You should always advertise any changes by calling updateState().
 	 * 
-	 * @param _direction A vector indicating the new orientation of the Entity
+	 * @param _orientation A vector indicating the new orientation of the Entity
 	 */
-	public void setOrientation(Tuple3f _orientation);
+	public void setOrientation(Vector3f _orientation);
 
 	/**
 	 * Sets the current orientation of this Entity.
