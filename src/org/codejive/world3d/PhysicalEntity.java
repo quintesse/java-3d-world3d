@@ -148,5 +148,5 @@ public interface PhysicalEntity {
 	 * 
 	 * @param _time The current time of the Universe at the moment of the call
 	 */
-	public void updatePhysics(long _time);
+	public void updatePhysics(float _fTime);
 }

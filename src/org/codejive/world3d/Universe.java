@@ -74,8 +74,8 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 		return m_physicsEngine;
 	}
 	
-	public long getAge() {
-		return (System.currentTimeMillis() - m_lBigBang);
+	public float getAge() {
+		return (float)(System.currentTimeMillis() - m_lBigBang) / 1000.0f;
 	}
 	
 	public SurfaceInformation newSurfaceInformation() {

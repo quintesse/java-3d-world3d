@@ -31,11 +31,11 @@ public class Entity implements PhysicalEntity, TerminalEntity, NetworkEncoder, N
 	protected boolean m_bIsTargetable;
 	protected boolean m_bIsSolid;
 	
-	private long m_lTimeOfBirth;
+	private float m_fTimeOfBirth;
 	protected boolean m_bIsPhysical = false;
 	protected boolean m_bIsTerminal = false;
-	private long m_nFirstPhysicsUpdate = 0;
-	private long m_nLastPhysicsUpdate = 0;
+	private float m_fFirstPhysicsUpdate = 0;
+	private float m_fLastPhysicsUpdate = 0;
 
 	private short m_nClassIndex;
 	private short m_nIstanceId;
@@ -114,7 +114,7 @@ public class Entity implements PhysicalEntity, TerminalEntity, NetworkEncoder, N
 
 	public void setUniverse(Universe _universe) {
 		m_universe = _universe;
-		m_lTimeOfBirth = m_universe.getAge();
+		m_fTimeOfBirth = m_universe.getAge();
 	}
 
 	/* (non-Javadoc)
@@ -240,12 +240,12 @@ public class Entity implements PhysicalEntity, TerminalEntity, NetworkEncoder, N
 		}
 	}
 	
-	public long getTimeOfBirth() {
-		return m_lTimeOfBirth;
+	public float getTimeOfBirth() {
+		return m_fTimeOfBirth;
 	}
 
 	public float getAge() {
-		return (m_universe.getAge() - m_lTimeOfBirth) / 1000.0f;
+		return (m_universe.getAge() - m_fTimeOfBirth);
 	}
 
 	/* (non-Javadoc)
@@ -273,15 +273,15 @@ public class Entity implements PhysicalEntity, TerminalEntity, NetworkEncoder, N
 	/* (non-Javadoc)
 	 * @see test.PhysicalEntity#updatePhysics(long)
 	 */
-	public void updatePhysics(long _time) {
-		if (m_nLastPhysicsUpdate > 0) {
-			float fSecs = (float)(_time - m_nLastPhysicsUpdate) / 1000;
+	public void updatePhysics(float _fTime) {
+		if (m_fLastPhysicsUpdate > 0) {
+			float fSecs = _fTime - m_fLastPhysicsUpdate;
 			m_universe.getPhysicsEngine().update(this, fSecs);
 			updateState();
 		} else {
-			m_nFirstPhysicsUpdate = _time;
+			m_fFirstPhysicsUpdate = _fTime;
 		}
-		m_nLastPhysicsUpdate = _time;
+		m_fLastPhysicsUpdate = _fTime;
 	}
 
 	/* (non-Javadoc)

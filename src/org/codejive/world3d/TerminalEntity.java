@@ -22,7 +22,7 @@ public interface TerminalEntity {
 	 */
 	public void setLifetime(float _fLifetime);
 
-	public long getTimeOfBirth();
+	public float getTimeOfBirth();
 
 	public float getAge();
 

@@ -17,7 +17,7 @@ public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEn
 	protected List m_liveParticles;
 	protected List m_deadParticles;
 
-	private long m_lLastSystemTime;
+	private float m_fLastSystemTime;
 	private boolean m_bReadyForRendering;
 
 	public BaseParticleEmitterImpl(int _nMaxParticleCount) {
@@ -36,12 +36,12 @@ public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEn
 	
 	public abstract Particle newParticle();
 
-	public void heartbeat(long _time) {
-		if (m_lLastSystemTime > 0) {
-			float fElapsedTime = (float)(_time - m_lLastSystemTime) / 1000;
+	public void heartbeat(float _fTime) {
+		if (m_fLastSystemTime > 0) {
+			float fElapsedTime = _fTime - m_fLastSystemTime;
 			update(fElapsedTime);
 		}
-		m_lLastSystemTime = _time;
+		m_fLastSystemTime = _fTime;
 	}
 	
 	public abstract void update(float _fElapsedTime);

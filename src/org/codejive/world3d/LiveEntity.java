@@ -7,5 +7,5 @@ package org.codejive.world3d;
  * @author tako
  */
 public interface LiveEntity {
-	public void heartbeat(long _time);
+	public void heartbeat(float _fTime);
 }
