@@ -59,6 +59,14 @@ public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEn
 		m_bReadyForRendering = true;
 	}
 
+	public void updateRendering(RenderContext _context) {
+		Iterator i = m_deadParticles.iterator();
+		while (i.hasNext()) {
+			Particle particle = (Particle)i.next();
+			particle.updateRendering(_context);
+		}
+	}
+
 	public void render(RenderContext _context) {
 		Iterator i = m_liveParticles.iterator();
 		while (i.hasNext()) {

@@ -26,7 +26,9 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	private Vector3f m_gravity;
 	private long m_lBigBang;
 
-	private static boolean m_bLoggingEnabled, m_bLogUnspecifiedClasses, m_bLogUnspecifiedObjects;
+	private static boolean m_bLoggingEnabled = true;
+	private static boolean m_bLogUnspecifiedClasses = true;
+	private static boolean m_bLogUnspecifiedObjects = true;
 	private static Map m_loggingClasses;
 	private static Map m_loggingObjects;
 	

@@ -30,5 +30,9 @@ public abstract class Shape extends Entity implements Renderable {
 		m_bReadyForRendering = true;
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.codejive.world3d.Renderable#updateRendering(org.codejive.world3d.RenderContext)
+	 */
+	public void updateRendering(RenderContext _context) {
+	}
 }
