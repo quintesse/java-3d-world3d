@@ -21,13 +21,7 @@ import org.codejive.utils4gl.Vectors;
  *  
  * @author Tako
  */
-public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderable, NetworkEncoder, NetworkDecoder {
-	protected Universe m_universe;
-	protected Point3f m_position;
-	protected Vector3f m_orientation;
-	protected Vector3f m_impulse;
-	protected LinkedList m_forces;
-	private float m_fGravityFactor;
+public abstract class Entity extends DefaultPhysicalEntityImpl implements TerminalEntity, Renderable, NetworkEncoder, NetworkDecoder {
 	private float m_fLifetime;
 	protected boolean m_bIsTargetable;
 	protected boolean m_bIsSolid;
@@ -45,13 +39,10 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	// Only here to speed things up
 	protected Matrix4f m_transform = new Matrix4f();
 	
+	/**
+	 * Constructor for a very generic Entity
+	 */
 	public Entity() {
-		m_universe = null;
-		m_position = new Point3f();
-		m_orientation = new Vector3f();
-		m_impulse = new Vector3f();
-		m_forces = new LinkedList();
-		m_fGravityFactor = 1.0f;
 		setLifetime(INFINITE);
 		m_bIsTargetable = false;
 		m_bIsSolid = false;
@@ -62,6 +53,7 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 
 	/**
 	 * Constructor for a new Entity with eternal life
+	 * @param _universe The Universe where the new entity should exist
 	 * @param _position The position for the new Entity
 	 * @param _orientation The orientation of the Entity
 	 * @param _impulse The Entity's impulse vector
@@ -80,6 +72,7 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 
 	/**
 	 * Constructor for a new Entity with eternal life
+	 * @param _universe The Universe where the new entity should exist
 	 * @param _position The position for the new Entity
 	 * @param _impulse The Entity's impulse vector
 	 * @param _fGravityFactor Determines the amount the Entity is affected by gravity
@@ -90,6 +83,7 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 
 	/**
 	 * Constructor for a new Entity facing positive Z en up being positive Y
+	 * @param _universe The Universe where the new entity should exist
 	 * @param _position The position for the new Entity
 	 * @param _fGravityFactor Determines the amount the Entity is affected by gravity
 	 */
@@ -97,112 +91,13 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 		this(_universe, _position, new Vector3f(Vectors.VECTF_ZERO), new Vector3f(Vectors.VECTF_ZERO), _fGravityFactor);
 	}
 
-	public Universe getUniverse() {
-		return m_universe;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.codejive.world3d.StaticEntity#setUniverse(org.codejive.world3d.Universe)
+	 */
 	public void setUniverse(Universe _universe) {
-		m_universe = _universe;
-		m_fTimeOfBirth = m_universe.getAge();
-		m_universe.addRenderable(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#getPosition()
-	 */
-	public Point3f getPosition() {
-		return m_position;
-	}
-	
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#setPosition(javax.vecmath.Tuple3f)
-	 */
-	public void setPosition(Tuple3f _position) {
-		setPosition(_position.x, _position.y, _position.z);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.PhysicalEntity#setPosition(float, float, float)
-	 */
-	public void setPosition(float _fX, float _fY, float _fZ) {
-		m_position.set(_fX, _fY, _fZ);
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#getOrientation()
-	 */
-	public Vector3f getOrientation() {
-		return m_orientation;
-	}
-	
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#setOrientation(javax.vecmath.Vector3f)
-	 */
-	public void setOrientation(Vector3f _orientation) {
-		setOrientation(_orientation.x, _orientation.y, _orientation.z);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.PhysicalEntity#setOrientation(float, float, float)
-	 */
-	public void setOrientation(float _fX, float _fY, float _fZ) {
-		m_orientation.set(_fX, _fY, _fZ);
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#getImpulse()
-	 */
-	public Vector3f getImpulse() {
-		return m_impulse;
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#setImpulse(javax.vecmath.Vector3f)
-	 */
-	public void setImpulse(Vector3f _impulse) {
-		setImpulse(_impulse.x, _impulse.y, _impulse.z);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.PhysicalEntity#setImpulse(float, float, float)
-	 */
-	public void setImpulse(float _fX, float _fY, float _fZ) {
-		m_impulse.set(_fX, _fY, _fZ);
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#addForce(test.ActiveForce)
-	 */
-	public void addForce(ActiveForce _force) {
-		m_forces.add(_force);
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#removeForce(test.ActiveForce)
-	 */
-	public void removeForce(ActiveForce _force) {
-		m_forces.remove(_force);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.PhysicalEntity#getForces()
-	 */
-	public List getForces() {
-		return m_forces;
-	}
-
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#getGravityFactor()
-	 */
-	public float getGravityFactor() {
-		return m_fGravityFactor;
-	}
-	
-	/* (non-Javadoc)
-	 * @see test.PhysicalEntity#setGravityFactor(float)
-	 */
-	public void setGravityFactor(float _fGravityFactor) {
-		m_fGravityFactor = _fGravityFactor;
+		super.setUniverse(_universe);
+		m_fTimeOfBirth = _universe.getAge();
+		_universe.addRenderable(this);
 	}
 
 	/* (non-Javadoc)
@@ -219,12 +114,12 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 		m_fLifetime = _fLifetime;
 		if (m_fLifetime >= 0.0f) {
 			if (!m_bIsTerminal) {
-				m_universe.addTerminalEntity(this);
+				getUniverse().addTerminalEntity(this);
 				m_bIsTerminal = true;
 			}
 		} else {
 			if (m_bIsTerminal) {
-				m_universe.removeTerminalEntity(this);
+				getUniverse().removeTerminalEntity(this);
 				m_bIsTerminal = false;
 			}
 		}
@@ -235,46 +130,38 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	}
 
 	public float getAge() {
-		return (m_universe.getAge() - m_fTimeOfBirth);
+		return (getUniverse().getAge() - m_fTimeOfBirth);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.Renderable#readyForRendering()
-	 */
 	public boolean readyForRendering() {
 		return m_bReadyForRendering;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.Renderable#initRendering(org.codejive.world3d.RenderContext)
-	 */
 	public void initRendering(RenderContext _context) {
 		m_bReadyForRendering = true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.codejive.world3d.Renderable#updateRendering(org.codejive.world3d.RenderContext)
-	 */
 	public void updateRendering(RenderContext _context) {
+		// No default implementation, override when necessary
 	}
 
 	/* (non-Javadoc)
 	 * @see test.PhysicalEntity#updateState()
 	 */
 	public void updateState() {
-		m_transform.set(m_orientation);
-		Vector3f p = new Vector3f(m_position);
+		m_transform.set(getOrientation());
+		Vector3f p = new Vector3f(getPosition());
 		m_transform.setTranslation(p);
 		
 		float fSpeed = m_impulse.length();
 		if ((fSpeed > Universe.ALMOST_ZERO) || (Math.abs(getGravityFactor()) > Universe.ALMOST_ZERO)) {
 			if (!m_bIsPhysical) {
-				m_universe.addPhysicalEntity(this);
+				getUniverse().addPhysicalEntity(this);
 				m_bIsPhysical = true;
 			}
 		} else {
 			if (m_bIsPhysical) {
-				m_universe.removePhysicalEntity(this);
+				getUniverse().removePhysicalEntity(this);
 				m_bIsPhysical = false;
 			}
 		}
@@ -286,7 +173,7 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	public void updatePhysics(float _fTime) {
 		if (m_fLastPhysicsUpdate > 0) {
 			float fSecs = _fTime - m_fLastPhysicsUpdate;
-			m_universe.getPhysicsEngine().update(this, fSecs);
+			getUniverse().getPhysicsEngine().update(this, fSecs);
 			updateState();
 		} else {
 			m_fFirstPhysicsUpdate = _fTime;
@@ -300,11 +187,11 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	public void terminateEntity() {
 		Universe.log(this, "Terminating " + this);
 		if (this instanceof LiveEntity) {
-			m_universe.removeLiveEntity((LiveEntity)this);
+			getUniverse().removeLiveEntity((LiveEntity)this);
 		}
-		m_universe.removePhysicalEntity(this);
-		m_universe.removeTerminalEntity(this);
-		m_universe.removeRenderable(this);
+		getUniverse().removePhysicalEntity(this);
+		getUniverse().removeTerminalEntity(this);
+		getUniverse().removeRenderable(this);
 	}
 	
 	/**
@@ -347,13 +234,13 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	 * @see org.codejive.world3d.net.NetworkEncoder#writeInit(org.codejive.world3d.net.MessageWriter)
 	 */
 	public void writeInit(MessageWriter _writer) {
-		_writer.writeShort(m_universe.getInstanceId());
-		_writer.writeFloat(m_position.x);
-		_writer.writeFloat(m_position.y);
-		_writer.writeFloat(m_position.z);
-		_writer.writeFloat(m_orientation.x);
-		_writer.writeFloat(m_orientation.y);
-		_writer.writeFloat(m_orientation.z);
+		_writer.writeShort(getUniverse().getInstanceId());
+		_writer.writeFloat(getPosition().x);
+		_writer.writeFloat(getPosition().y);
+		_writer.writeFloat(getPosition().z);
+		_writer.writeFloat(getOrientation().x);
+		_writer.writeFloat(getOrientation().y);
+		_writer.writeFloat(getOrientation().z);
 		_writer.writeFloat(m_impulse.x);
 		_writer.writeFloat(m_impulse.y);
 		_writer.writeFloat(m_impulse.z);
@@ -379,8 +266,8 @@ public abstract class Entity implements PhysicalEntity, TerminalEntity, Renderab
 	public void netInit(MessageReader _reader) {
 		short nUniverseId = _reader.readShort();
 		setUniverse((Universe)NetworkClassCache.getClientCache().getInstance(nUniverseId));
-		m_position.set(_reader.readFloat(), _reader.readFloat(), _reader.readFloat());
-		m_orientation.set(_reader.readFloat(), _reader.readFloat(), _reader.readFloat());
+		setPosition(_reader.readFloat(), _reader.readFloat(), _reader.readFloat());
+		setOrientation(_reader.readFloat(), _reader.readFloat(), _reader.readFloat());
 		m_impulse.set(_reader.readFloat(), _reader.readFloat(), _reader.readFloat());
 		updateState();
 		if (this instanceof LiveEntity) {
