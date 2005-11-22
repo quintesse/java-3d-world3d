@@ -1,11 +1,12 @@
 package org.codejive.world3d.loaders.md3;
 
 import java.io.FileInputStream;
+import java.nio.ByteBuffer;
 import java.awt.Image;
 
 class loadImage
 {
-  byte[]         data;
+  ByteBuffer     data;
   int            width,
                  height;
   loadImage(){
@@ -41,22 +42,24 @@ class loadImage
       pixels = loadBitmapPixels(textureName);
 
     if(AlphaChannel){
-        data = new byte[pixels.length*3];
+		data = ByteBuffer.allocateDirect(pixels.length * 3);
         for(int y = height -1, pointer = 0; y>=0; y--)
         for(int x = 0; x<width; x++,pointer+=3){
-          data[pointer+0] = (byte)((pixels[y*width + x] >> 16) & 0xFF);
-          data[pointer+1] = (byte)((pixels[y*width + x] >>  8) & 0xFF);
-          data[pointer+2] = (byte) (pixels[y*width + x]        & 0xFF);
+          byte nRed = (byte) (pixels[y*width + x] & 0xFF);
+          byte nGreen = (byte)((pixels[y*width + x] >> 8) & 0xFF);
+          byte nBlue = (byte)((pixels[y*width + x] >> 16) & 0xFF);
+          data.put(nBlue).put(nGreen).put(nRed);
         }
     }
     else{
-        data = new byte[pixels.length*4];
+		data = ByteBuffer.allocateDirect(pixels.length * 4);
         for(int y = height -1, pointer = 0; y>=0; y--)
         for(int x = 0; x<width; x++,pointer+=4){
-          data[pointer+3] = (byte)((pixels[y*width + x] >> 24) & 0xFF);
-          data[pointer+0] = (byte)((pixels[y*width + x] >> 16) & 0xFF);
-          data[pointer+1] = (byte)((pixels[y*width + x] >>  8) & 0xFF);
-          data[pointer+2] = (byte)( pixels[y*width + x]        & 0xFF);
+          byte nRed = (byte) (pixels[y*width + x] & 0xFF);
+          byte nGreen = (byte)((pixels[y*width + x] >> 8) & 0xFF);
+          byte nBlue = (byte)((pixels[y*width + x] >> 16) & 0xFF);
+          byte nAlpha = (byte)((pixels[y*width + x] >> 24) & 0xFF);
+          data.put(nBlue).put(nGreen).put(nRed).put(nAlpha);
         }
     }
     pixels = null;

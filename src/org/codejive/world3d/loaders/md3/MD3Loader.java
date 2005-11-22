@@ -127,16 +127,13 @@
 
 package org.codejive.world3d.loaders.md3;
 
-import net.java.games.jogl.GLU;
-import javax.swing.JOptionPane;
-
-import org.codejive.utils4gl.Texture;
-import org.codejive.utils4gl.TextureReader;
-
 import java.util.StringTokenizer;
-import net.java.games.jogl.GL;
 import java.util.Vector;
 import java.io.*;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
+import javax.swing.JOptionPane;
 
 public class MD3Loader
 {
@@ -1072,7 +1069,7 @@ public class MD3Loader
 
 		//////////// *** NEW *** ////////// *** NEW *** ///////////// *** NEW *** ////////////////////
 		// Finally, apply the rotation and translation matrix to the current matrix
-		gl.glMultMatrixf( finalMatrix );
+		gl.glMultMatrixf( finalMatrix, 0 );
 		//////////// *** NEW *** ////////// *** NEW *** ///////////// *** NEW *** ////////////////////
 		// Recursively draw the next model that is linked to the current one.
 		// This could either be a body part or a gun that is attached to
@@ -1625,7 +1622,7 @@ public class MD3Loader
 
   void CreateTexture(int[] textureArray,String strFileName, int textureID){
     int[] tempArray = new int[1];
-    gl.glGenTextures(1, tempArray);
+    gl.glGenTextures(1, tempArray, 0);
     textureArray[textureID] = tempArray[0];
     loadImage loader = new loadImage();
     loader.generateTextureInfo(strFileName,true);
