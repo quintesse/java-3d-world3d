@@ -10,69 +10,7 @@ import javax.vecmath.*;
 /**
  * @author Tako
  */
-public interface PhysicalEntity {
-
-	public static final float INFINITE = -1.0f;
-	
-	public Universe getUniverse();
-
-	public void setUniverse(Universe _universe);
-
-	/**
-	 * Returns the current position for this Entity.
-	 * NB: you get a reference to the actual internal position,
-	 * changes made to it will affect the position of the Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * @return A point indicating the Entity's position
-	 */
-	public Point3f getPosition();
-	
-	/**
-	 * Sets the current position for this Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * 
-	 * @param _position A point indicating the Entity's new position
-	 */
-	public void setPosition(Tuple3f _position);
-
-	/**
-	 * Sets the current position for this Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * 
-	 * @param _fX The X coordinate of the point indicating the Entity's new position
-	 * @param _fY The Y coordinate of the point indicating the Entity's new position
-	 * @param _fZ The Z coordinate of the point indicating the Entity's new position
-	 */
-	public void setPosition(float _fX, float _fY, float _fZ);
-	
-	
-	/**
-	 * Returns the current orientation of this Entity.
-	 * NB: you get a reference to the actual internal orientation,
-	 * changes made to it will affect the orientation of the Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * 
-	 * @return A vector indicating the orientation of the Entity
-	 */
-	public Vector3f getOrientation();
-	
-	/**
-	 * Sets the current orientation of this Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * 
-	 * @param _orientation A vector indicating the new orientation of the Entity
-	 */
-	public void setOrientation(Vector3f _orientation);
-
-	/**
-	 * Sets the current orientation of this Entity.
-	 * You should always advertise any changes by calling updateState().
-	 * 
-	 * @param _fX The X component of the vector indicating the new orientation of the Entity
-	 * @param _fY The Y component of the vector indicating the new orientation of the Entity
-	 * @param _fZ The Z component of the vector indicating the new orientation of the Entity
-	 */
-	public void setOrientation(float _fX, float _fY, float _fZ);
+public interface PhysicalEntity extends StaticEntity {
 
 	/**
 	 * Returns the current impulse vector for this Entity.
@@ -133,7 +71,7 @@ public interface PhysicalEntity {
 	/**
 	 * Sets the influence gravity has on the Entity.
 	 * 
-	 * @param __fFactor A multiplication factor indicating the amount of influence gravity has
+	 * @param _fFactor A multiplication factor indicating the amount of influence gravity has
 	 */
 	public void setGravityFactor(float _fFactor);
 	
@@ -146,7 +84,7 @@ public interface PhysicalEntity {
 	 * Updates the physical parameters of the Entity according its position, direction, speed or lifetime.
 	 * NB: You should not call this method directly!
 	 * 
-	 * @param _time The current time of the Universe at the moment of the call
+	 * @param _fTime The current time of the Universe at the moment of the call
 	 */
 	public void updatePhysics(float _fTime);
 }
