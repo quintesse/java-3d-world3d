@@ -37,6 +37,11 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 
 	public static final float ALMOST_ZERO = 0.00001f;
 	
+	static {
+		m_loggingClasses = new HashMap();
+		m_loggingObjects = new HashMap();
+	}
+	
 	public Universe() {
 		m_renderables = new LinkedList();
 		m_physicalEntities = new LinkedList();
@@ -45,12 +50,6 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 		m_gravity = new Vector3f(0.0f, -1.0f, 0.0f);
 		m_lBigBang = System.currentTimeMillis();
 
-		m_bLoggingEnabled = true;
-		m_bLogUnspecifiedClasses = true;
-		m_bLogUnspecifiedObjects = true;
-		m_loggingClasses = new HashMap();
-		m_loggingObjects = new HashMap();
-		
 		// TODO: We shouldn't use getServerCache() here because Universe is also used for the Client!!!
 		m_nClassIndex = NetworkClassCache.getServerCache().getClassIndex(this.getClass().getName());
 		m_nIstanceId = NetworkInstanceIdGenerator.getNewId();
