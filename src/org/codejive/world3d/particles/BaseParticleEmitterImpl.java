@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.codejive.utils4gl.RenderContext;
+import org.codejive.utils4gl.RenderObserver;
 import org.codejive.world3d.LiveEntity;
 
 /**
@@ -59,19 +60,11 @@ public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEn
 		m_bReadyForRendering = true;
 	}
 
-	public void updateRendering(RenderContext _context) {
-		Iterator i = m_deadParticles.iterator();
-		while (i.hasNext()) {
-			Particle particle = (Particle)i.next();
-			particle.updateRendering(_context);
-		}
-	}
-
-	public void render(RenderContext _context) {
+	public void render(RenderContext _context, RenderObserver _observer) {
 		Iterator i = m_liveParticles.iterator();
 		while (i.hasNext()) {
 			Particle particle = (Particle)i.next();
-			particle.render(_context);
+			particle.render(_context, _observer);
 		}
 	}
 }
