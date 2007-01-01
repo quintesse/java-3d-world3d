@@ -3,7 +3,7 @@
  */
 package org.codejive.world3d;
 
-import java.util.*;
+import java.util.logging.Logger;
 
 import javax.vecmath.*;
 
@@ -38,6 +38,8 @@ public abstract class Entity extends DefaultPhysicalEntityImpl implements Termin
 	
 	// Only here to speed things up
 	protected Matrix4f m_transform = new Matrix4f();
+	
+	private static Logger logger = Logger.getLogger(Entity.class.getName());
 	
 	/**
 	 * Constructor for a very generic Entity
@@ -94,6 +96,7 @@ public abstract class Entity extends DefaultPhysicalEntityImpl implements Termin
 	/* (non-Javadoc)
 	 * @see org.codejive.world3d.StaticEntity#setUniverse(org.codejive.world3d.Universe)
 	 */
+	@Override
 	public void setUniverse(Universe _universe) {
 		super.setUniverse(_universe);
 		m_fTimeOfBirth = _universe.getAge();
@@ -185,7 +188,7 @@ public abstract class Entity extends DefaultPhysicalEntityImpl implements Termin
 	 * @see test.TerminalEntity#terminateEntity()
 	 */
 	public void terminateEntity() {
-		Universe.log(this, "Terminating " + this);
+		logger.info("Terminating " + this);
 		if (this instanceof LiveEntity) {
 			getUniverse().removeLiveEntity((LiveEntity)this);
 		}

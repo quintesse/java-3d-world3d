@@ -70,11 +70,10 @@ public class MessagePacket implements MessageReader, MessageWriter {
 	}
 
 	public byte readByte() {
-		if (hasMoreData()) {
-			return m_packetBuffer[m_readPosition++];
-		} else {
+		if (!hasMoreData()) {
 			throw new NetworkException("Read past end of packet");
 		}
+		return m_packetBuffer[m_readPosition++];
 	}
 
 	public int readUnsignedByte() {

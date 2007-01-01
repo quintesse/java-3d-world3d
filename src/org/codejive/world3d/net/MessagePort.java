@@ -6,8 +6,8 @@ package org.codejive.world3d.net;
 import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
-
-import org.codejive.world3d.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tako
@@ -24,10 +24,12 @@ public class MessagePort implements Runnable {
 	private InetAddress m_broadcastAddress;
 	private MessagePacket m_packets[];
 	private boolean m_obtainedPackets[];
-	private LinkedList m_packetsRead;
+	private LinkedList<MessagePacket> m_packetsRead;
 	private int m_nPacketsReceived;
 	private int m_nPacketsSent;
 	private int m_nPacketsDropped;
+	
+	private static Logger logger = Logger.getLogger(MessagePort.class.getName());
 	
 	public MessagePort(String _sName) {
 		this(_sName, -1, null, -1);
@@ -58,7 +60,7 @@ public class MessagePort implements Runnable {
 			initPacket(m_packets[i]);
 			m_obtainedPackets[i] = false;
 		}
-		m_packetsRead = new LinkedList();
+		m_packetsRead = new LinkedList<MessagePacket>();
 		m_nPacketsReceived = 0;
 		m_nPacketsSent = 0;
 	}
@@ -113,7 +115,7 @@ public class MessagePort implements Runnable {
 			} else {
 				m_socket = new DatagramSocket();
 			}
-			Universe.log(this, "Created socket on port " + m_socket.getLocalPort());
+			logger.info("Created socket on port " + m_socket.getLocalPort());
 			if ((m_destAddress != null) && (m_nDestPort != -1)) {
 				bind(m_destAddress, m_nDestPort);
 			}
@@ -124,9 +126,9 @@ public class MessagePort implements Runnable {
 				
 			bOk = true;
 		} catch (UnknownHostException e) {
-			Universe.log(this, "Could not determine broadcast address: " + e.getMessage());
+			logger.info("Could not determine broadcast address: " + e.getMessage());
 		} catch (SocketException e) {
-			Universe.log(this, "Could not create socket: " + e.getMessage());
+			logger.info("Could not create socket: " + e.getMessage());
 		}
 		return bOk;
 	}
@@ -142,17 +144,18 @@ public class MessagePort implements Runnable {
 					m_socket.close();
 				}
 			}
-			Universe.log(this, "stopped");
+			logger.info("stopped");
 		} else {
-			Universe.log(this, "already stopped");
+			logger.info("already stopped");
 		}
 	}
 		
 	public void bind(InetAddress _destAddress, int _nDestPort) {
-		Universe.log(this, "bound to " + _destAddress + ":" + _nDestPort);
+		logger.info("bound to " + _destAddress + ":" + _nDestPort);
 		m_socket.connect(_destAddress, _nDestPort);
 	}
 	
+	@Override
 	protected void finalize() throws Throwable {
 		stop();
 	}
@@ -167,7 +170,7 @@ public class MessagePort implements Runnable {
 				udpPacket.setData(msgPacket.getBytes(), 0, msgPacket.getMaxSize());
 				m_socket.receive(udpPacket);
 				m_nPacketsReceived++;
-				Universe.log(this, "packet received (" + udpPacket.getLength() + " bytes)");
+				logger.info("packet received (" + udpPacket.getLength() + " bytes)");
 
 				if (udpPacket.getLength() > 0) {
 					msgPacket.clear();
@@ -188,9 +191,9 @@ public class MessagePort implements Runnable {
 				m_thread = null;
 			}
 		} catch (IOException e) {
-			Universe.log(this, "Could not receive packet: " + e.getMessage());
+			logger.log(Level.WARNING, "Could not receive packet", e);
 		} catch (InterruptedException e) {
-			Universe.log(this, "read thread interrupted");
+			logger.log(Level.INFO, "Read thread interrupted", e);
 		}
 	}
 	
@@ -231,7 +234,7 @@ public class MessagePort implements Runnable {
 		return (m_socket == null) || m_socket.isClosed();
 	}
 		
-	public boolean hasMoreData() throws InterruptedException {
+	public boolean hasMoreData() {
 		boolean bResult;
 		
 		bResult = (m_packetsRead.size() > 0);
@@ -244,10 +247,10 @@ public class MessagePort implements Runnable {
 		while (packet == null) {
 			synchronized(m_packetsRead) {
 				if (m_packetsRead.size() > 0) {
-					packet = (MessagePacket)m_packetsRead.removeFirst();
+					packet = m_packetsRead.removeFirst();
 				}
 				if (packet == null) {
-					Thread.currentThread().interrupted();
+					Thread.interrupted();
 					m_packetsRead.wait();
 				}
 			}
@@ -262,11 +265,11 @@ public class MessagePort implements Runnable {
 	public void sendPacket(InetAddress _destAddress, int _nDestPort, MessagePacket _packet) {
 		try {
 			DatagramPacket packet = new DatagramPacket(_packet.getBytes(), _packet.getSize(), _destAddress, _nDestPort);
-			Universe.log(this, "send packet of " + _packet.getSize() + " bytes to " + _destAddress + ":" + _nDestPort);
+			logger.info("send packet of " + _packet.getSize() + " bytes to " + _destAddress + ":" + _nDestPort);
 			m_socket.send(packet);
 			m_nPacketsSent++;
 		} catch (IOException e) {
-			Universe.log(this, "Could not send packet: " + e.getMessage());
+			logger.log(Level.WARNING, "Could not send packet: ", e);
 		}
 	}
 	
@@ -278,6 +281,7 @@ public class MessagePort implements Runnable {
 		sendPacket(m_broadcastAddress, _nDestPort, _packet);
 	}
 	
+	@Override
 	public String toString() {
 		return getClass().getName() + " '" + getName() + "', #in:" + getPacketsReceived() + ", #out:" + getPacketsSent();
 	}

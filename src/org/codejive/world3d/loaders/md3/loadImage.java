@@ -13,7 +13,8 @@ class loadImage
     destroy();
   }
 
-  void generateTextureInfo(String textureName, boolean AlphaChannel){
+  @SuppressWarnings("null")
+void generateTextureInfo(String textureName, boolean AlphaChannel){
     Image textureFile = null;
     int   pixels[];
 
@@ -79,7 +80,8 @@ class loadImage
       input.read(bitmapFileHeader,0,bitmapFileHeaderLength);
       input.read(bitmapInfoHeader,0,bitmapInfoHeaderLength);
 
-      int nSize             = bytesToInt(bitmapFileHeader, 2),
+      @SuppressWarnings("unused")
+	int nSize             = bytesToInt(bitmapFileHeader, 2),
           nWidth            = bytesToInt(bitmapInfoHeader, 4),
           nHeight           = bytesToInt(bitmapInfoHeader, 8),
           nBiSize           = bytesToInt(bitmapInfoHeader, 0),
@@ -148,7 +150,7 @@ class loadImage
 
         for(int j8 = 0; j8 < nHeight; j8++){
           for(int i8 = 0; i8 < nWidth; i8++){
-            ndata8[nWidth*(nHeight-j8-1)+i8] = npalette[((int)bdata[nindex8]&0xff)];
+            ndata8[nWidth*(nHeight-j8-1)+i8] = npalette[(bdata[nindex8]&0xff)];
             nindex8++;
           }
           nindex8 += npad8;

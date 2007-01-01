@@ -9,11 +9,13 @@ package org.codejive.world3d.net;
 public class TypePacker {
 	
 	private static int byte2uint(byte _value) {
+		int result;
 		if ((_value & 0x80) == 0) {
-			return _value;
+			result = _value;
 		} else {
-			return (_value & 0x7f) | 0x80;
+			result = (_value & 0x7f) | 0x80;
 		}
+		return result;
 	}
 	
 	public static int readUnsignedByte(ByteReader _reader) {

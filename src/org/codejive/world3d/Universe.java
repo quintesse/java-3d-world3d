@@ -4,6 +4,7 @@
 package org.codejive.world3d;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import javax.vecmath.*;
 
@@ -19,34 +20,25 @@ import org.codejive.world3d.physics.SimplePhysicsEngine;
 public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDecoder {
 	private Landscape m_landscape;
 	private PhysicsEngine m_physicsEngine;
-	private List m_renderables;
-	private List m_physicalEntities;
-	private List m_terminalEntities;
-	private List m_liveEntities;
+	private List<Renderable> m_renderables;
+	private List<PhysicalEntity> m_physicalEntities;
+	private List<TerminalEntity> m_terminalEntities;
+	private List<LiveEntity> m_liveEntities;
 	private Vector3f m_gravity;
 	private long m_lBigBang;
 
-	private static boolean m_bLoggingEnabled = true;
-	private static boolean m_bLogUnspecifiedClasses = true;
-	private static boolean m_bLogUnspecifiedObjects = true;
-	private static Map m_loggingClasses;
-	private static Map m_loggingObjects;
-	
 	private short m_nClassIndex;
 	private short m_nIstanceId;
 
 	public static final float ALMOST_ZERO = 0.00001f;
 	
-	static {
-		m_loggingClasses = new HashMap();
-		m_loggingObjects = new HashMap();
-	}
+	private static Logger logger = Logger.getLogger(Universe.class.getName());
 	
 	public Universe() {
-		m_renderables = new LinkedList();
-		m_physicalEntities = new LinkedList();
-		m_terminalEntities = new LinkedList();
-		m_liveEntities = new LinkedList();
+		m_renderables = new LinkedList<Renderable>();
+		m_physicalEntities = new LinkedList<PhysicalEntity>();
+		m_terminalEntities = new LinkedList<TerminalEntity>();
+		m_liveEntities = new LinkedList<LiveEntity>();
 		m_gravity = new Vector3f(0.0f, -1.0f, 0.0f);
 		m_lBigBang = System.currentTimeMillis();
 
@@ -76,7 +68,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	}
 	
 	public float getAge() {
-		return (float)(System.currentTimeMillis() - m_lBigBang) / 1000.0f;
+		return (System.currentTimeMillis() - m_lBigBang) / 1000.0f;
 	}
 	
 	public SurfaceInformation newSurfaceInformation() {
@@ -114,7 +106,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return A List containing all the renderable objects
 	 */
-	public List getRenderablesList() {
+	public List<Renderable> getRenderablesList() {
 		return Collections.unmodifiableList(m_renderables);
 	}
 	
@@ -123,7 +115,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return An Iterator over all the renderable objects
 	 */
-	public Iterator getRenderables() {
+	public Iterator<Renderable> getRenderables() {
 		return getRenderablesList().iterator();
 	}
 	
@@ -138,7 +130,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void addPhysicalEntity(PhysicalEntity _entity) {
 		m_physicalEntities.add(_entity);
-		log(this, "Entering the realm of physics " + _entity.toString());
+		logger.info("Entering the realm of physics " + _entity.toString());
 	}
 	
 	/**
@@ -148,7 +140,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void removePhysicalEntity(PhysicalEntity _entity) {
 		m_physicalEntities.remove(_entity);
-		log(this, "Leaving the realm of physics " + _entity.toString());
+		logger.info("Leaving the realm of physics " + _entity.toString());
 	}
 	
 	/**
@@ -156,7 +148,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return A List containing all the physical entities
 	 */
-	public List getPhysicalEntitiesList() {
+	public List<PhysicalEntity> getPhysicalEntitiesList() {
 		return Collections.unmodifiableList(m_physicalEntities);
 	}
 	
@@ -165,7 +157,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return An Iterator over all the physical entities
 	 */
-	public Iterator getPhysicalEntities() {
+	public Iterator<PhysicalEntity> getPhysicalEntities() {
 		return getPhysicalEntitiesList().iterator();
 	}
 	
@@ -180,7 +172,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void addTerminalEntity(TerminalEntity _entity) {
 		m_terminalEntities.add(_entity);
-		log(this, "Becoming mortal " + _entity.toString());
+		logger.info("Becoming mortal " + _entity.toString());
 	}
 	
 	/**
@@ -190,7 +182,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void removeTerminalEntity(TerminalEntity _entity) {
 		m_terminalEntities.remove(_entity);
-		log(this, "Becoming immortal " + _entity.toString());
+		logger.info("Becoming immortal " + _entity.toString());
 	}
 	
 	/**
@@ -198,7 +190,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return A List containing all the terminal entities
 	 */
-	public List getTerminalEntitiesList() {
+	public List<TerminalEntity> getTerminalEntitiesList() {
 		return Collections.unmodifiableList(m_terminalEntities);
 	}
 	
@@ -207,7 +199,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return An Iterator over all the terminal entities
 	 */
-	public Iterator getTerminalEntities() {
+	public Iterator<TerminalEntity> getTerminalEntities() {
 		return getTerminalEntitiesList().iterator();
 	}
 	
@@ -221,7 +213,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void addLiveEntity(LiveEntity _entity) {
 		m_liveEntities.add(_entity);
-		log(this, "Heartbeat started for " + _entity.toString());
+		logger.info("Heartbeat started for " + _entity.toString());
 	}
 	
 	/**
@@ -231,7 +223,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void removeLiveEntity(LiveEntity _entity) {
 		m_liveEntities.remove(_entity);
-		log(this, "Heartbeat stopped for " + _entity.toString());
+		logger.info("Heartbeat stopped for " + _entity.toString());
 	}
 	
 	/**
@@ -239,7 +231,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return A List containing all the live entities
 	 */
-	public List getLiveEntitiesList() {
+	public List<LiveEntity> getLiveEntitiesList() {
 		return Collections.unmodifiableList(m_liveEntities);
 	}
 	
@@ -248,7 +240,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 *
 	 * @return An Iterator over all the live entities
 	 */
-	public Iterator getLiveEntities() {
+	public Iterator<LiveEntity> getLiveEntities() {
 		return getLiveEntitiesList().iterator();
 	}
 	
@@ -286,7 +278,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 * @param _fRadius The radius of the spherical area in which we are interested
 	 * @return An Iterator over all the live entities in a certain area
 	 */
-	public Iterator getLiveEntitiesWithinRadius(Point3f _center, float _fRadius) {
+	public Iterator<LiveEntity> getLiveEntitiesWithinRadius(Point3f _center, float _fRadius) {
 		return getLiveEntitiesWithinRadius(_center, _fRadius, null, true);
 	}
 
@@ -303,29 +295,26 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	}
 	
 	public void handleFrame(float _fElapsedTime) {
-		List ents;
-		Iterator i;
-		
-		ents = new ArrayList(getTerminalEntitiesList());
-		i = ents.iterator();
-		while (i.hasNext()) {
-			TerminalEntity e = (Entity)i.next();
+		ArrayList<TerminalEntity> tents = new ArrayList<TerminalEntity>(getTerminalEntitiesList());
+		Iterator<TerminalEntity> ti = tents.iterator();
+		while (ti.hasNext()) {
+			TerminalEntity e = ti.next();
 			if (e.getAge() > e.getLifetime()) {
 				e.terminateEntity();
 			}
 		}
 		
-		ents = new ArrayList(getPhysicalEntitiesList());
-		i = ents.iterator();
-		while (i.hasNext()) {
-			PhysicalEntity e = (PhysicalEntity)i.next();
+		ArrayList<PhysicalEntity> pents = new ArrayList<PhysicalEntity>(getPhysicalEntitiesList());
+		Iterator<PhysicalEntity> pi = pents.iterator();
+		while (pi.hasNext()) {
+			PhysicalEntity e = pi.next();
 			e.updatePhysics(getAge());
 		}
 		
-		ents = new ArrayList(getLiveEntitiesList());
-		i = ents.iterator();
-		while (i.hasNext()) {
-			LiveEntity e = (LiveEntity)i.next();
+		ArrayList<LiveEntity> lents = new ArrayList<LiveEntity>(getLiveEntitiesList());
+		Iterator<LiveEntity> li = lents.iterator();
+		while (li.hasNext()) {
+			LiveEntity e = li.next();
 			e.heartbeat(getAge());
 		}
 	}
@@ -399,56 +388,5 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 */
 	public void netUpdate(MessageReader _reader) {
 		// TODO Handle Universe update message writing
-	}
-
-	// Oracle /////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Writes a text to the log 
-	 * @param _sText The text to write to the log
-	 */	
-	public static void log(Class _loggingClass, String _sText) {
-		if (m_bLoggingEnabled) {
-			boolean bLog = m_bLogUnspecifiedClasses;
-			// Has logging been specifically turned on or off for objects of this class?
-			if (m_loggingClasses.containsKey(_loggingClass)) {
-				bLog = ((Boolean)m_loggingClasses.get(_loggingClass)).booleanValue();
-			}
-			if (bLog) {
-				log(_loggingClass.toString() + ": " + _sText);
-			}
-		}
-	}
-
-	/**
-	 * Writes a text to the log 
-	 * @param _sText The text to write to the log
-	 */	
-	public static void log(Object _loggingObject, String _sText) {
-		if (m_bLoggingEnabled) {
-			boolean bLog = m_bLogUnspecifiedObjects;
-			// Has logging been specifically turned on or off for this object?
-			if (m_loggingObjects.containsKey(_loggingObject)) {
-				bLog = ((Boolean)m_loggingObjects.get(_loggingObject)).booleanValue();
-			} else {
-				// Has logging been specifically turned on or off for objects of the same class?
-				if (m_loggingClasses.containsKey(_loggingObject.getClass())) {
-					bLog = ((Boolean)m_loggingClasses.get(_loggingObject.getClass())).booleanValue();
-				}
-			}
-			if (bLog) {
-				log(_loggingObject.toString() + ": " + _sText);
-			}
-		}
-	}
-
-	/**
-	 * Writes a text to the log 
-	 * @param _sText The text to write to the log
-	 */	
-	public static void log(String _sText) {
-		if (m_bLoggingEnabled) {
-			System.out.println(_sText);
-		}
 	}
 }

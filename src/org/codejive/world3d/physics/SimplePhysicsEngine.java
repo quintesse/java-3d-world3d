@@ -3,8 +3,6 @@
  */
 package org.codejive.world3d.physics;
 
-import java.util.Iterator;
-
 import javax.vecmath.Vector3f;
 
 import org.codejive.world3d.ActiveForce;
@@ -43,9 +41,7 @@ public class SimplePhysicsEngine implements PhysicsEngine {
 		m_tmpVector.scale(_entity.getGravityFactor());
 		m_forceVector.add(m_tmpVector);
 		if (_entity.getForces() != null) {
-			Iterator i = _entity.getForces().iterator();
-			while (i.hasNext()) {
-				ActiveForce force = (ActiveForce)i.next();
+			for (ActiveForce force : _entity.getForces()) {
 				m_forceVector.add(force.getForce(_entity));
 			}
 		}

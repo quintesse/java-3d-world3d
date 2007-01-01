@@ -14,12 +14,12 @@ import javax.vecmath.Vector3f;
  */
 public abstract class DefaultPhysicalEntityImpl extends DefaultStaticEntityImpl implements PhysicalEntity {
 	protected Vector3f m_impulse;
-	protected LinkedList m_forces;
+	protected LinkedList<ActiveForce> m_forces;
 	private float m_fGravityFactor;
 
 	public DefaultPhysicalEntityImpl() {
 		m_impulse = new Vector3f();
-		m_forces = new LinkedList();
+		m_forces = new LinkedList<ActiveForce>();
 		m_fGravityFactor = 1.0f;
 	}
 	
@@ -61,7 +61,7 @@ public abstract class DefaultPhysicalEntityImpl extends DefaultStaticEntityImpl 
 	/* (non-Javadoc)
 	 * @see org.codejive.world3d.PhysicalEntity#getForces()
 	 */
-	public List getForces() {
+	public List<ActiveForce> getForces() {
 		return m_forces;
 	}
 

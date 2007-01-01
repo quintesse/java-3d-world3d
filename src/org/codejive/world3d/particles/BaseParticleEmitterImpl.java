@@ -15,16 +15,16 @@ import org.codejive.world3d.LiveEntity;
 public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEntity {
 	private int m_nMaxParticleCount;
 	
-	protected List m_liveParticles;
-	protected List m_deadParticles;
+	protected List<Particle> m_liveParticles;
+	protected List<Particle> m_deadParticles;
 
 	private float m_fLastSystemTime;
 	private boolean m_bReadyForRendering;
 
 	public BaseParticleEmitterImpl(int _nMaxParticleCount) {
 		m_nMaxParticleCount = _nMaxParticleCount;
-		m_liveParticles = new LinkedList();
-		m_deadParticles = new LinkedList();
+		m_liveParticles = new LinkedList<Particle>();
+		m_deadParticles = new LinkedList<Particle>();
 		for (int i = 0; i < _nMaxParticleCount; i++) {
 			m_deadParticles.add(newParticle());
 		}
@@ -52,18 +52,18 @@ public abstract class BaseParticleEmitterImpl implements ParticleEmitter, LiveEn
 	}
 
 	public void initRendering(RenderContext _context) {
-		Iterator i = m_deadParticles.iterator();
+		Iterator<Particle> i = m_deadParticles.iterator();
 		while (i.hasNext()) {
-			Particle particle = (Particle)i.next();
+			Particle particle = i.next();
 			particle.initRendering(_context);
 		}
 		m_bReadyForRendering = true;
 	}
 
 	public void render(RenderContext _context, RenderObserver _observer) {
-		Iterator i = m_liveParticles.iterator();
+		Iterator<Particle> i = m_liveParticles.iterator();
 		while (i.hasNext()) {
-			Particle particle = (Particle)i.next();
+			Particle particle = i.next();
 			particle.render(_context, _observer);
 		}
 	}

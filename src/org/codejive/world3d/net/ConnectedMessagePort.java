@@ -38,10 +38,15 @@ public class ConnectedMessagePort extends MessagePort {
 		return m_nLastPacketReceived;
 	}
 	
+	public int getLastPacketAcknowledged() {
+		return m_nLastPacketAcknowledged;
+	}
+	
 	public int getPacketsLost() {
 		return m_nPacketsLost;
 	}
 	
+	@Override
 	public void initPacket(MessagePacket _packet) {
 		super.initPacket(_packet);
 		_packet.writeInt(0); // Packet nr, but we don't know it yet at this point
@@ -49,6 +54,7 @@ public class ConnectedMessagePort extends MessagePort {
 		_packet.writeByte((byte)0); // Packet flags, but we don't know them yet at this point
 	}
 
+	@Override
 	protected void handlePacket(MessagePacket _packet) {
 		int nPacketNr = _packet.readInt();
 		if (nPacketNr > (m_nLastPacketReceived + 1)) {
@@ -56,9 +62,10 @@ public class ConnectedMessagePort extends MessagePort {
 		}
 		m_nLastPacketReceived = nPacketNr;
 		m_nLastPacketAcknowledged = _packet.readInt();
-		byte nFlags = _packet.readByte();
+		_packet.readByte();	// Packet flags, not used yet
 	}
 
+	@Override
 	public void sendPacket(MessagePacket _packet) {
 		m_nLastPacketSent++;
 		
@@ -75,6 +82,7 @@ public class ConnectedMessagePort extends MessagePort {
 		super.sendPacket(_packet);
 	}
 	
+	@Override
 	public String toString() {
 		return super.toString() + ", #lost:" + getPacketsLost();
 	}

@@ -3,8 +3,6 @@
  */
 package org.codejive.world3d.particles;
 
-import org.codejive.utils4gl.RenderContext;
-
 /**
  * @author tako
  */
@@ -17,6 +15,7 @@ public class SimpleParticleEmitter extends BaseParticleEmitterImpl {
 	/* (non-Javadoc)
 	 * @see org.codejive.world3d.particles.ParticleEmitter#newParticle()
 	 */
+	@Override
 	public Particle newParticle() {
 		// TODO Auto-generated method stub
 		return null;
@@ -25,8 +24,8 @@ public class SimpleParticleEmitter extends BaseParticleEmitterImpl {
 	/* (non-Javadoc)
 	 * @see org.codejive.world3d.particles.ParticleEmitter#update(float)
 	 */
+	@Override
 	public void update(float _fElapsedTime) {
 		// TODO Auto-generated method stub
-
 	}
 }

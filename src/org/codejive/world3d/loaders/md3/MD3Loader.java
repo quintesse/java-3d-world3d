@@ -390,13 +390,16 @@ public class MD3Loader
 							numOfObjects,               // The number of objects in the model
 							numOfMaterials,             // The number of materials for the model
 							numOfAnimations;            // The number of animations in this model
-				  float     t;                          // The ratio of 0.0f to 1.0f between each key frame
-				  double    lastTime;                   // This stores the last time that was stored
-				  Vector    pAnimations = new Vector(), // The list of animations
-							pMaterials  = new Vector(), // The list of material information (Textures and colors)
-							pObject     = new Vector(); // The object list for our model
-				  tMd3Tag   pTags[];                    // This stores all the tags for the model animations
-				  t3DModel  pLinks[];                   // This stores a list of pointers that are linked to this model
+	  float     t;                          // The ratio of 0.0f to 1.0f between each key frame
+	  double    lastTime;                   // This stores the last time that was stored
+	  Vector<tAnimationInfo>
+	  			pAnimations = new Vector<tAnimationInfo>(); // The list of animations
+	  Vector<tMaterialInfo>
+	  			pMaterials  = new Vector<tMaterialInfo>(); // The list of material information (Textures and colors)
+	  Vector<t3DObject>
+				pObject     = new Vector<t3DObject>(); // The object list for our model
+	  tMd3Tag   pTags[];                    // This stores all the tags for the model animations
+	  t3DModel  pLinks[];                   // This stores a list of pointers that are linked to this model
   }
 
   int unsignedByte(){
@@ -439,7 +442,7 @@ public class MD3Loader
 				m_Upper,        // This stores the players upper body part
 				m_Lower,        // This stores the players lower body part
 				m_Head;         // This stores the players head body part
-  Vector        strTextures;
+  Vector<String> strTextures;
   byte[]        fileContents;
   int           kUpper  = 1,    // This stores the ID for the torso model
 				kHead   = 2,    // This stores the ID for the head model
@@ -463,7 +466,7 @@ public class MD3Loader
 	m_Lower     = new t3DModel();
 	m_Weapon    = new t3DModel();
 	m_Textures  = new int[MAX_TEXTURES];
-	strTextures = new Vector();
+	strTextures = new Vector<String>();
   }
 
   ///////////////////////////////// IS IN STRING \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
@@ -707,18 +710,18 @@ public class MD3Loader
 	// Go through all the materials that are assigned to this model
 	for(int i = 0; i < pModel.numOfMaterials; i++){
 	  // Check to see if there is a file name to load in this material
-	  if(((tMaterialInfo)pModel.pMaterials.get(i)).strFile != null){
+	  if((pModel.pMaterials.get(i)).strFile != null){
 		// Create a boolean to tell us if we have a new texture to load
 		boolean bNewTexture = true;
 		// Go through all the textures in our string list to see if it's already loaded
 		for(int j = 0; j < strTextures.size(); j++){
 		// If the texture name is already in our list of texture, don't load it again.
-		  if(((tMaterialInfo)pModel.pMaterials.get(i)).strFile.equals( ((String)strTextures.get(j)))){
+		  if((pModel.pMaterials.get(i)).strFile.equals( (strTextures.get(j)))){
 			// We don't need to load this texture since it's already loaded
 			bNewTexture = false;
 			// Assign the texture index to our current material textureID.
 			// This ID will them be used as an index into m_Textures[].
-			((tMaterialInfo)pModel.pMaterials.get(i)).texureId = j;
+			(pModel.pMaterials.get(i)).texureId = j;
 		  }
 		}
 		// Make sure before going any further that this is a new texture to be loaded
@@ -727,19 +730,19 @@ public class MD3Loader
 		String strFullPath;
 
 		// Add the file name and path together so we can load the texture
-		strFullPath = strPath + "/" + ((tMaterialInfo)pModel.pMaterials.get(i)).strFile;
+		strFullPath = strPath + "/" + (pModel.pMaterials.get(i)).strFile;
 
 		// We pass in a reference to an index into our texture array member variable.
 		// The size() function returns the current loaded texture count.  Initially
 		// it will be 0 because we haven't added any texture names to our strTextures list.
 		CreateTexture(m_Textures, strFullPath, strTextures.size());
 		// Set the texture ID for this material by getting the current loaded texture count
-		((tMaterialInfo)pModel.pMaterials.get(i)).texureId = strTextures.size();
+		(pModel.pMaterials.get(i)).texureId = strTextures.size();
 		// Now we increase the loaded texture count by adding the texture name to our
 		// list of texture names.  Remember, this is used so we can check if a texture
 		// is already loaded before we load 2 of the same textures.  Make sure you
 		// understand what an STL vector list is.  We have a tutorial on it if you don't.
-		strTextures.add(((tMaterialInfo)pModel.pMaterials.get(i)).strFile);
+		strTextures.add((pModel.pMaterials.get(i)).strFile);
 	  }
 	}
   }
@@ -753,10 +756,7 @@ public class MD3Loader
   ///////////////////////////////// LOAD ANIMATIONS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
   boolean isDigit(char check){
-	if(check >='0' && check <= '9')
-	  return true;
-	else
-	  return false;
+	return (check >='0' && check <= '9');
   }
 
   boolean LoadAnimations(String strConfigFile){
@@ -927,7 +927,7 @@ public class MD3Loader
 	// so there won't be any change.
 
 	// Here we grab the current animation that we are on from our model's animation list
-	tAnimationInfo  pAnim = (tAnimationInfo)pModel.pAnimations.get(pModel.currentAnim);
+	tAnimationInfo  pAnim = pModel.pAnimations.get(pModel.currentAnim);
 
 	// If there is any animations for this model
 	if(pModel.numOfAnimations != 0){
@@ -1116,7 +1116,7 @@ public class MD3Loader
 	elapsedTime = time - pModel.lastTime;
 
 	// Store the animation speed for this animation in a local variable
-	int animationSpeed = ((tAnimationInfo)(pModel.pAnimations.get(pModel.currentAnim))).framesPerSecond;
+	int animationSpeed = ((pModel.pAnimations.get(pModel.currentAnim))).framesPerSecond;
 
 	// To find the current t we divide the elapsed time by the ratio of:
 	//
@@ -1159,7 +1159,7 @@ public class MD3Loader
 	// Go through all of the objects stored in this model
 	for(int i = 0; i < pModel.numOfObjects; i++){
 	  // Get the current object that we are displaying
-	  t3DObject pObject = (t3DObject) pModel.pObject.get(i);
+	  t3DObject pObject = pModel.pObject.get(i);
 	  //////////// *** NEW *** ////////// *** NEW *** ///////////// *** NEW *** ////////////////////
 	  // Now that we have animation for our model, we need to interpolate between
 	  // the vertex key frames.  The .md3 file format stores all of the vertex
@@ -1178,18 +1178,18 @@ public class MD3Loader
 
 	  if(pObject.bHasTexture){
 		// Turn on texture mapping
-		gl.glEnable(gl.GL_TEXTURE_2D);
+		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Grab the texture index from the materialID index into our material list
-		int textureID = ((tMaterialInfo)pModel.pMaterials.get(pObject.materialID)).texureId;
+		int textureID = (pModel.pMaterials.get(pObject.materialID)).texureId;
 		// Bind the texture index that we got from the material textureID
-		gl.glBindTexture(gl.GL_TEXTURE_2D, m_Textures[textureID]);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, m_Textures[textureID]);
 	  }
 	  else
 	   // Turn off texture mapping
-		gl.glDisable(gl.GL_TEXTURE_2D);
+		gl.glDisable(GL.GL_TEXTURE_2D);
 
 		// Start drawing our model triangles
-	  gl.glBegin(gl.GL_TRIANGLES);
+	  gl.glBegin(GL.GL_TRIANGLES);
 
 	  // Go through all of the faces (polygons) of the object and draw them
 	  for(int j = 0; j < pObject.numOfFaces; j++){
@@ -1237,10 +1237,10 @@ public class MD3Loader
 	// Go through all of the animations in this model
 	for(int i = 0; i < m_Upper.numOfAnimations; i++){
 	  // If the animation name passed in is the same as the current animation's name
-	  if(((tAnimationInfo)(m_Upper.pAnimations.get(i))).strName.equals(strAnimation)){
+	  if(((m_Upper.pAnimations.get(i))).strName.equals(strAnimation)){
 		// Set the legs animation to the current animation we just found and return
 		m_Upper.currentAnim = i;
-		m_Upper.currentFrame = ((tAnimationInfo)(m_Upper.pAnimations.get(m_Upper.currentAnim))).startFrame;
+		m_Upper.currentFrame = ((m_Upper.pAnimations.get(m_Upper.currentAnim))).startFrame;
 		return;
 	  }
 	}
@@ -1258,10 +1258,10 @@ public class MD3Loader
 	// Go through all of the animations in this model
 	for(int i = 0; i < m_Lower.numOfAnimations; i++){
 	  // If the animation name passed in is the same as the current animation's name
-	  if(((tAnimationInfo)(m_Lower.pAnimations.get(i))).strName.equals(strAnimation)){
+	  if(((m_Lower.pAnimations.get(i))).strName.equals(strAnimation)){
 		// Set the legs animation to the current animation we just found and return
 		m_Lower.currentAnim = i;
-		m_Lower.currentFrame = ((tAnimationInfo)(m_Lower.pAnimations.get(m_Lower.currentAnim))).startFrame;
+		m_Lower.currentFrame = ((m_Lower.pAnimations.get(m_Lower.currentAnim))).startFrame;
 		return;
 	  }
 	}
@@ -1509,7 +1509,6 @@ public class MD3Loader
 	if( pModel == null ||  strSkin == null ) return false;
 
 	FileInputStream input = null;
-	int fileSize = 0;
 	try{
 
 	  input = new FileInputStream(strSkin);
@@ -1524,7 +1523,7 @@ public class MD3Loader
 		// Loop through all of our objects to test if their name is in this line
 		for(int i = 0; i < pModel.numOfObjects; i++){
 		  // Check if the name of this object appears in this line from the skin file
-		  if(IsInString(strLine, ((t3DObject)pModel.pObject.get(i)).strName)){
+		  if(IsInString(strLine, (pModel.pObject.get(i)).strName)){
 			// To extract the texture name, we loop through the string, starting
 			// at the end of it until we find a '/' character, then save that index + 1.
 			textureNameStart = strLine.lastIndexOf("/") + 1;
@@ -1541,8 +1540,8 @@ public class MD3Loader
 			texture.uTile = texture.uTile = 1;
 
 			// Store the material ID for this object and set the texture boolean to true
-			((t3DObject)pModel.pObject.get(i)).materialID = pModel.numOfMaterials;
-			((t3DObject)pModel.pObject.get(i)).bHasTexture = true;
+			(pModel.pObject.get(i)).materialID = pModel.numOfMaterials;
+			(pModel.pObject.get(i)).bHasTexture = true;
 			// Here we increase the number of materials for the model
 			pModel.numOfMaterials++;
 			// Add the local material info structure to our model's material list
@@ -1595,8 +1594,8 @@ public class MD3Loader
 		 texture.uTile = texture.uTile = 1;
 
 		 // Store the material ID for this object and set the texture boolean to true
-		 ((t3DObject)pModel.pObject.get(currentIndex)).materialID = pModel.numOfMaterials;
-		 ((t3DObject)pModel.pObject.get(currentIndex)).bHasTexture = true;
+		 (pModel.pObject.get(currentIndex)).materialID = pModel.numOfMaterials;
+		 (pModel.pObject.get(currentIndex)).bHasTexture = true;
 
 		 // Here we increase the number of materials for the model
 		 pModel.numOfMaterials++;
@@ -1627,12 +1626,12 @@ public class MD3Loader
     loadImage loader = new loadImage();
     loader.generateTextureInfo(strFileName,true);
     // This sets the alignment requirements for the start of each pixel row in memory.
-    gl.glPixelStorei (gl.GL_UNPACK_ALIGNMENT, 1);
-    gl.glBindTexture(gl.GL_TEXTURE_2D, textureArray[textureID]);
+    gl.glPixelStorei (GL.GL_UNPACK_ALIGNMENT, 1);
+    gl.glBindTexture(GL.GL_TEXTURE_2D, textureArray[textureID]);
     //Assign the mip map levels and texture info
-    gl.glTexParameteri(gl.GL_TEXTURE_2D,gl.GL_TEXTURE_MIN_FILTER,gl.GL_LINEAR_MIPMAP_NEAREST);
-    gl.glTexParameteri(gl.GL_TEXTURE_2D,gl.GL_TEXTURE_MAG_FILTER,gl.GL_LINEAR_MIPMAP_LINEAR);
-    glu.gluBuild2DMipmaps(gl.GL_TEXTURE_2D, gl.GL_RGB8, loader.width, loader.height, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, loader.data);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR_MIPMAP_NEAREST);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR_MIPMAP_LINEAR);
+    glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, loader.width, loader.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, loader.data);
     loader.destroy();
   }
 }

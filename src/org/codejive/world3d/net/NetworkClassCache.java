@@ -9,8 +9,8 @@ import java.util.*;
  * @author Tako
  */
 public class NetworkClassCache {
-	private ArrayList m_classes = new ArrayList();
-	private HashMap m_instances = new HashMap();
+	private ArrayList<NetworkClass> m_classes = new ArrayList<NetworkClass>();
+	private HashMap<Short, NetworkDecoder> m_instances = new HashMap<Short, NetworkDecoder>();
 
 	public void registerClass(String _sServerClassName, String _sClientClassName) {
 		m_classes.add(new NetworkClass(_sServerClassName, _sClientClassName));
@@ -19,7 +19,7 @@ public class NetworkClassCache {
 	public short getClassIndex(String _sName) {
 		short nIndex = -1;
 		for (int i = 0; i < m_classes.size(); i++) {
-			NetworkClass nc = (NetworkClass)m_classes.get(i);
+			NetworkClass nc = m_classes.get(i);
 			if (nc.sServerClassName.equals(_sName)) {
 				nIndex = (short)i;
 				break;
@@ -28,7 +28,7 @@ public class NetworkClassCache {
 		return nIndex;
 	}	
 	
-	public List getRegisteredClasses() {
+	public List<NetworkClass> getRegisteredClasses() {
 		return Collections.unmodifiableList(m_classes);	
 	}
 	
@@ -37,16 +37,17 @@ public class NetworkClassCache {
 	}
 	
 	public String getClientClassName(int _nIndex) {
-		NetworkClass nc = (NetworkClass)m_classes.get(_nIndex);
+		NetworkClass nc = m_classes.get(_nIndex);
 		return nc.sClientClassName;
 	}
 	
-	public Class getClientClass(int _nIndex) {
-		Class cls = null;
-		NetworkClass nc = (NetworkClass)m_classes.get(_nIndex);
+	@SuppressWarnings("unchecked")
+	public Class<NetworkClass> getClientClass(int _nIndex) {
+		Class<NetworkClass> cls = null;
+		NetworkClass nc = m_classes.get(_nIndex);
 		if (nc.clientClass == null) {
 			try {
-				cls = Class.forName(nc.sClientClassName);
+				cls = (Class<NetworkClass>) Class.forName(nc.sClientClassName);
 				nc.clientClass = cls;
 			} catch (ClassNotFoundException e) {
 				/* ignore */
@@ -56,11 +57,11 @@ public class NetworkClassCache {
 	}
 	
 	public void registerInstance(short _nInstanceId, NetworkDecoder _object) {
-		m_instances.put(new Short(_nInstanceId), _object);
+		m_instances.put(_nInstanceId, _object);
 	}
 	
 	public NetworkDecoder getInstance(short _nInstanceId) {
-		return (NetworkDecoder)m_instances.get(new Short(_nInstanceId));
+		return m_instances.get(_nInstanceId);
 	}
 	
 	public void clearRegisteredInstances() {

@@ -59,7 +59,7 @@ public interface PhysicalEntity extends StaticEntity {
 	 * 
 	 * @return A list of ActiveForce objects
 	 */
-	public List getForces();
+	public List<ActiveForce> getForces();
 		
 	/**
 	 * Determines the influence gravity has on the Entity.
