@@ -297,6 +297,7 @@ public abstract class Entity extends DefaultPhysicalEntityImpl implements Termin
 	 * 
 	 * Adds info about the Entity's class, position, impulse and speed
 	 */
+	@Override
 	public String toString() {
 		String sRes = super.toString();
 		sRes += " p:" + getPosition() + " i:" + getImpulse();
