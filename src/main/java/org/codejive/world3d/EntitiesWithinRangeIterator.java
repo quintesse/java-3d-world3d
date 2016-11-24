@@ -15,13 +15,13 @@ import org.codejive.utils4gl.ConditionalIterator;
 public class EntitiesWithinRangeIterator<E> extends ConditionalIterator<E> {
 	private Point3f m_center;
 	private float m_fRangeSquared;
-	private Class<E> m_class;
+	private Class<? extends E> m_class;
 	private boolean m_bMustBeTargetable;
 	
 	/**
 	 * @param _iter
 	 */
-	public EntitiesWithinRangeIterator(Iterator<E> _iter, Point3f _center, float _fRange, Class<E> _class, boolean _bMustBeTargetable) {
+	public EntitiesWithinRangeIterator(Iterator<E> _iter, Point3f _center, float _fRange, Class<? extends E> _class, boolean _bMustBeTargetable) {
 		super(_iter);
 		m_center = _center;
 		m_fRangeSquared = _fRange * _fRange;

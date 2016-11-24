@@ -254,8 +254,8 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 * @param _bMustBetargetable Determines if the Entities must be targetable
 	 * @return An Iterator over all the live entities in a certain area
 	 */
-	public Iterator getLiveEntitiesWithinRadius(Point3f _center, float _fRadius, Class _class, boolean _bMustBetargetable) {
-		return new EntitiesWithinRangeIterator(getLiveEntities(), _center, _fRadius, _class, _bMustBetargetable);
+	public Iterator<LiveEntity> getLiveEntitiesWithinRadius(Point3f _center, float _fRadius, Class<? extends LiveEntity> _class, boolean _bMustBetargetable) {
+		return new EntitiesWithinRangeIterator<LiveEntity>(getLiveEntities(), _center, _fRadius, _class, _bMustBetargetable);
 	}
 
 	/**
@@ -267,7 +267,7 @@ public abstract class Universe implements ActiveForce, NetworkEncoder, NetworkDe
 	 * @param _class The EntityClass of the Entities in which we are interested or null for any class 
 	 * @return An Iterator over all the live entities in a certain area
 	 */
-	public Iterator getLiveEntitiesWithinRadius(Point3f _center, float _fRadius, Class _class) {
+	public Iterator<LiveEntity> getLiveEntitiesWithinRadius(Point3f _center, float _fRadius, Class<? extends LiveEntity> _class) {
 		return getLiveEntitiesWithinRadius(_center, _fRadius, _class, true);
 	}
 

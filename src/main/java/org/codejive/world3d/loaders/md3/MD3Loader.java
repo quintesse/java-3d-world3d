@@ -131,14 +131,15 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.io.*;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
 import javax.swing.JOptionPane;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
 
 public class MD3Loader
 {
 
-  GL  gl;
+  GL2  gl;
   GLU glu;
 
   // If one model is set to one of the BOTH_* animations, the other one should be too,
@@ -458,7 +459,7 @@ public class MD3Loader
   /////
   ///////////////////////////////// CMODEL MD3 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-  public MD3Loader(GL gll, GLU gluu){
+  public MD3Loader(GL2 gll, GLU gluu){
 	gl          = gll;
 	glu         = gluu;
 	m_Head      = new t3DModel();
@@ -1178,18 +1179,18 @@ public class MD3Loader
 
 	  if(pObject.bHasTexture){
 		// Turn on texture mapping
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		gl.glEnable(GL2.GL_TEXTURE_2D);
 		// Grab the texture index from the materialID index into our material list
 		int textureID = (pModel.pMaterials.get(pObject.materialID)).texureId;
 		// Bind the texture index that we got from the material textureID
-		gl.glBindTexture(GL.GL_TEXTURE_2D, m_Textures[textureID]);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, m_Textures[textureID]);
 	  }
 	  else
 	   // Turn off texture mapping
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
 
 		// Start drawing our model triangles
-	  gl.glBegin(GL.GL_TRIANGLES);
+	  gl.glBegin(GL2.GL_TRIANGLES);
 
 	  // Go through all of the faces (polygons) of the object and draw them
 	  for(int j = 0; j < pObject.numOfFaces; j++){
@@ -1626,12 +1627,12 @@ public class MD3Loader
     loadImage loader = new loadImage();
     loader.generateTextureInfo(strFileName,true);
     // This sets the alignment requirements for the start of each pixel row in memory.
-    gl.glPixelStorei (GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, textureArray[textureID]);
+    gl.glPixelStorei (GL2.GL_UNPACK_ALIGNMENT, 1);
+    gl.glBindTexture(GL2.GL_TEXTURE_2D, textureArray[textureID]);
     //Assign the mip map levels and texture info
-    gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR_MIPMAP_NEAREST);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR_MIPMAP_LINEAR);
-    glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, loader.width, loader.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, loader.data);
+    gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_MIN_FILTER,GL2.GL_LINEAR_MIPMAP_NEAREST);
+    gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_MAG_FILTER,GL2.GL_LINEAR_MIPMAP_LINEAR);
+    glu.gluBuild2DMipmaps(GL2.GL_TEXTURE_2D, GL2.GL_RGB8, loader.width, loader.height, GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, loader.data);
     loader.destroy();
   }
 }
